@@ -18,8 +18,8 @@
 #include <string.h>
 
 typedef enum{
-	RAM_SIZE            = 0xFFFF,		//64k
-	ROM_KERNAL_SIZE     = 0x2000,		//8k
+	RAM_SIZE			= 0xFFFF,		//64k
+	ROM_KERNAL_SIZE		= 0x2000,		//8k
 	ROM_CHAR_SIZE		= 0x1000,		//4k
 	ROM_CART_SIZE		= 0x2000,		//8k
 	IO_MEM_SIZE			= 0x1000,		//4k
