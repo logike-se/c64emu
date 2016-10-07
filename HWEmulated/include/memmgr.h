@@ -18,12 +18,12 @@
 #include <string.h>
 
 typedef enum{
-	RAM_SIZE			= 0xFFFF,		//64k
-	ROM_KERNAL_SIZE		= 0x2000,		//8k
-	ROM_CHAR_SIZE		= 0x1000,		//4k
-	ROM_CART_SIZE		= 0x2000,		//8k
-	IO_MEM_SIZE			= 0x1000,		//4k
-	MEM_PAGE_SIZE		= 256
+	RAM_SIZE		= 0xFFFF,	//64k
+	ROM_KERNAL_SIZE	= 0x2000,	//8k
+	ROM_CHAR_SIZE	= 0x1000,	//4k
+	ROM_CART_SIZE	= 0x2000,	//8k
+	IO_MEM_SIZE		= 0x1000,	//4k
+	MEM_PAGE_SIZE	= 256
 } E_MEMORY_SIZE;
 
 typedef enum{
@@ -86,9 +86,9 @@ static uint8_t ROM_CART_HI[ROM_CART_SIZE];
 static uint8_t ROM_CART_LO[ROM_CART_SIZE];
 static E_IO_TYPE IO_MEM[IO_MEM_SIZE];
 
-void 	MemInit();
-void 	Mem(uint16_t address, uint8_t* data, E_MEM_ACCESS rw);
-void 	MemLoad(uint16_t address, uint8_t* data, uint16_t length);
+void MemInit();
+void Mem(uint16_t address, uint8_t* data, E_MEM_ACCESS rw);
+void MemLoad(uint16_t address, uint8_t* data, uint16_t length);
 
 
 #endif /* MEMORY_ */
