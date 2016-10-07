@@ -31,7 +31,7 @@
 								<option defaultValue="true" id="macosx.c.link.macosx.so.debug.option.shared.1092377582" name="Shared (-dynamiclib)" superClass="macosx.c.link.macosx.so.debug.option.shared" useByScannerDiscovery="false" valueType="boolean"/>
 								<option id="macosx.c.link.option.strip.1183355373" name="Omit all symbol information (-s)" superClass="macosx.c.link.option.strip" useByScannerDiscovery="false" value="false" valueType="boolean"/>
 								<option id="macosx.c.link.option.noshared.830473243" name="No shared libraries (-static)" superClass="macosx.c.link.option.noshared" useByScannerDiscovery="false" value="false" valueType="boolean"/>
-								<option id="macosx.c.link.option.libs.1691580883" superClass="macosx.c.link.option.libs" useByScannerDiscovery="false" valueType="libs">
+								<option id="macosx.c.link.option.libs.1691580883" name="Libraries (-l)" superClass="macosx.c.link.option.libs" useByScannerDiscovery="false" valueType="libs">
 									<listOptionValue builtIn="false" value="System"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.macosx.c.linker.input.1423242748" superClass="cdt.managedbuild.tool.macosx.c.linker.input">

@@ -18,7 +18,7 @@
 #include <string.h>
 
 typedef enum{
-	RAM_SIZE 			= 0xFFFF,		//64k
+	RAM_SIZE			= 0xFFFF,		//64k
 	ROM_KERNAL_SIZE		= 0x2000,		//8k
 	ROM_CHAR_SIZE		= 0x1000,		//4k
 	ROM_CART_SIZE		= 0x2000,		//8k
@@ -27,7 +27,7 @@ typedef enum{
 } E_MEMORY_SIZE;
 
 typedef enum{
-	BASE_RAM 			= 0x0000,
+	BASE_RAM			= 0x0000,
 	BASE_KERNAL			= 0xE000,
 	BASE_CHAR			= 0xD000,
 	BASE_BASIC			= 0xB000,
@@ -51,7 +51,7 @@ typedef enum{
 typedef enum{
 	BASE_VIC 		= 0x000,
 	BASE_SID 		= 0x400,
-	BASE_COLOR_RAM 	= 0x800,
+	BASE_COLOR_RAM	= 0x800,
 	BASE_CIA1		= 0xC00,
 	BASE_CIA2		= 0xD00,
 	BASE_IO1		= 0xE00,
