@@ -1,5 +1,9 @@
 #include "memmgr.h"
 
+uint8_t CONTROL_BITS = LORAM | HIRAM | CHAREN | GAME | EXROM;
+uint8_t GameEnabled_n = GAME;
+uint8_t ExpansionEnabled_n = EXROM;
+
 /* Initialize all memories */
 void MemInit(){
 	/* Clear RAM */
@@ -25,3 +29,22 @@ void MemInit(){
 	memset(&IO_MEM[BASE_IO2], TYPE_IO2, SIZE_IO);
 }
 
+/* This function performs reads and writes to the memory */
+void Mem(uint16_t address, uint8_t* data, MEM_ACCESS rw){
+    /* Check memory configuration */
+    CONTROL_BITS = (RAM[CPU_PORT_REG] & 0x03) | GameEnabled_n | ExpansionEnabled_n;
+}
+
+/* Insert or remove cartridge */
+void Cardridge(CARTRIDGE_TYPE t, bool insert){
+    switch(t){
+    case CART_GAME:
+        GameEnabled_n = (insert) ? 0 : GAME;
+        break;
+    case CART_EXROM:
+        ExpansionEnabled_n = (insert) ? 0 : EXROM;
+        break;
+    default:
+        break;
+    }
+}

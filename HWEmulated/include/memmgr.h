@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 typedef enum{
 	RAM_SIZE        = 0xFFFF,   //64k
@@ -24,7 +25,7 @@ typedef enum{
 	ROM_CART_SIZE   = 0x2000,   //8k
 	IO_MEM_SIZE     = 0x1000,   //4k
 	MEM_PAGE_SIZE   = 256
-} E_MEMORY_SIZE;
+} MEMORY_SIZE;
 
 typedef enum{
 	BASE_RAM            = 0x0000,
@@ -35,7 +36,7 @@ typedef enum{
 	BASE_CART_HI_EXT    = 0xA000,
 	BASE_CART_LO        = 0x8000,
 	BASE_IO             = 0xD000
-} E_MEM_BASE_ADDRESS;
+} MEM_BASE_ADDRESS;
 
 typedef enum{
 	TYPE_VIC,
@@ -45,7 +46,7 @@ typedef enum{
 	TYPE_CIA2,
 	TYPE_IO1,
 	TYPE_IO2
-} E_IO_TYPE;
+} IO_TYPE;
 
 /* Note: Real base address is IO_BASE_ADDRESS + MEM_BASE_ADDRESS */
 typedef enum{
@@ -56,7 +57,7 @@ typedef enum{
 	BASE_CIA2       = 0xD00,
 	BASE_IO1        = 0xE00,
 	BASE_IO2        = 0xF00
-} E_IO_BASE_ADDRESS;
+} IO_BASE_ADDRESS;
 
 typedef enum{
 	SIZE_VIC        = 0x400,
@@ -64,7 +65,7 @@ typedef enum{
 	SIZE_COLOR_RAM  = 0x400,
 	SIZE_CIA        = 0x100,
 	SIZE_IO         = 0x100
-} E_IO_SIZE;
+} IO_SIZE;
 
 typedef enum{
 	LORAM   = 0x01,
@@ -72,23 +73,35 @@ typedef enum{
 	CHAREN  = 0x04,
 	GAME    = 0x08,
 	EXROM   = 0x10
-} E_BANK_SWITCH_MASK;
+} BANK_SWITCH_MASK;
 
 typedef enum{
 	MEM_READ,
 	MEM_WRITE
-} E_MEM_ACCESS;
+} MEM_ACCESS;
 
+typedef enum{
+    CPU_PORT_REG    = 0x0001
+} CPU_REGISTERS;
+
+typedef enum{
+    CART_GAME,
+    CART_EXROM
+} CARTRIDGE_TYPE;
+
+/* Memory declarations */
 static uint8_t RAM[RAM_SIZE];
 static uint8_t ROM_KERNAL[ROM_KERNAL_SIZE];
 static uint8_t ROM_CHAR[ROM_CHAR_SIZE];
 static uint8_t ROM_CART_HI[ROM_CART_SIZE];
 static uint8_t ROM_CART_LO[ROM_CART_SIZE];
-static E_IO_TYPE IO_MEM[IO_MEM_SIZE];
+static IO_TYPE IO_MEM[IO_MEM_SIZE];
 
+
+/* Function declarations */
 void MemInit();
-void Mem(uint16_t address, uint8_t* data, E_MEM_ACCESS rw);
-void MemLoad(uint16_t address, uint8_t* data, uint16_t length);
-
+void Mem(uint16_t address, uint8_t* data, MEM_ACCESS rw);
+extern void MemLoad(uint16_t address, uint8_t* data, uint16_t length);
+extern void Cartridge(CARTRIDGE_TYPE t, bool insert);
 
 #endif /* MEMORY_ */
