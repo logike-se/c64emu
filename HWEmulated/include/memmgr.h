@@ -49,8 +49,8 @@ typedef enum{
 
 /* Note: Real base address is IO_BASE_ADDRESS + MEM_BASE_ADDRESS */
 typedef enum{
-	BASE_VIC 		= 0x000,
-	BASE_SID 		= 0x400,
+	BASE_VIC		= 0x000,
+	BASE_SID		= 0x400,
 	BASE_COLOR_RAM	= 0x800,
 	BASE_CIA1		= 0xC00,
 	BASE_CIA2		= 0xD00,
