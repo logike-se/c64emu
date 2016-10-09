@@ -42,7 +42,7 @@ void Mem(uint16_t address, uint8_t* data, MEM_ACCESS rw){
     }
     PreviousPage = memPage;
 
-    /* Calculate the currently mapped memory for the specified address */
+    /* Get the current memory bank and calculate its local address */
     uint8_t zone = getBankSwitchZone(memPage);
     MEM_TYPE memType = getMemType(zone, ctrlBits);
     MEM_BASE_ADDRESS base = getBaseAddress(zone);
@@ -82,6 +82,7 @@ void Cardridge(CARTRIDGE_TYPE t, bool insert){
     }
 }
 
+/* Returns bank switching zone based on memory page */
 static uint8_t getBankSwitchZone(uint8_t page){
     // TODO: Implement
     return 0;
