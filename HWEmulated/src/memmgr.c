@@ -1,8 +1,8 @@
 #include "memmgr.h"
 
-uint8_t CONTROL_BITS = LORAM | HIRAM | CHAREN | GAME | EXROM;
-uint8_t GameEnabled_n = GAME;
-uint8_t ExpansionEnabled_n = EXROM;
+static uint8_t GameEnabled_n = GAME;
+static uint8_t ExpansionEnabled_n = EXROM;
+static uint8_t PreviousPage = 0;
 
 /* Initialize all memories */
 void MemInit(){
@@ -31,8 +31,41 @@ void MemInit(){
 
 /* This function performs reads and writes to the memory */
 void Mem(uint16_t address, uint8_t* data, MEM_ACCESS rw){
-    /* Check memory configuration */
-    CONTROL_BITS = (RAM[CPU_PORT_REG] & 0x03) | GameEnabled_n | ExpansionEnabled_n;
+
+    /* Check memory configuration for bank switching */
+    uint8_t ctrlBits = (RAM[CPU_PORT_REG] & 0x03) | GameEnabled_n | ExpansionEnabled_n;
+
+    /* Handle page crossing */
+    uint8_t memPage = address / MEM_PAGE_SIZE;
+    if (PreviousPage != memPage){
+        // TODO: if page crossed then tick()
+    }
+    PreviousPage = memPage;
+
+    /* Calculate the currently mapped memory for the specified address */
+    uint8_t zone = getBankSwitchZone(memPage);
+    MEM_TYPE memType = getMemType(zone, ctrlBits);
+    MEM_BASE_ADDRESS base = getBaseAddress(zone);
+    uint16_t localAddress = address - base;
+
+    if (memType == TYPE_IO){
+        /* If the call is to another HW module, a.k.a IO, then dispatch the call to that module */
+        IO_TYPE ioType = IO_MEM[localAddress];
+        uint16_t ioBase = getIOBaseAddress(ioType);
+        uint16_t ioAddress = localAddress - ioBase;
+        dispatchIOMemCall(ioType, ioAddress, data, rw);
+    }
+    else{
+        if (rw == MEM_READ){
+            /* Fetch the memory for read */
+            uint8_t* mem = getMemory(memType);
+            *data = mem[localAddress];
+        }
+        else{
+            /* All writes that are not to IO will be written thru to RAM */
+            RAM[localAddress] = *data;
+        }
+    }
 }
 
 /* Insert or remove cartridge */
@@ -47,4 +80,33 @@ void Cardridge(CARTRIDGE_TYPE t, bool insert){
     default:
         break;
     }
+}
+
+static uint8_t getBankSwitchZone(uint8_t page){
+    // TODO: Implement
+    return 0;
+}
+
+static MEM_TYPE getMemType(uint8_t zone, uint8_t ctrl){
+    // TODO: Implement
+    return TYPE_UNMAPPED;
+}
+
+static MEM_BASE_ADDRESS getBaseAddress(uint8_t zone){
+    // TODO: Implement
+    return BASE_RAM;
+}
+
+static IO_BASE_ADDRESS getIOBaseAddress(IO_TYPE type){
+    // TODO: Implement
+    return BASE_VIC;
+}
+
+static void dispatchIOMemCall(IO_TYPE type, uint16_t address, uint8_t* data, MEM_ACCESS rw){
+    // TODO: Implement
+}
+
+static uint8_t* getMemory(MEM_TYPE type){
+    // TODO: Implement
+    return RAM;
 }

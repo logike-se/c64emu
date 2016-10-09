@@ -19,6 +19,16 @@
 #include <stdbool.h>
 
 typedef enum{
+    TYPE_UNMAPPED,
+    TYPE_RAM,
+    TYPE_KERNAL,
+    TYPE_CHAR,
+    TYPE_CART_HI,
+    TYPE_CART_LO,
+    TYPE_IO
+} MEM_TYPE;
+
+typedef enum{
 	RAM_SIZE        = 0xFFFF,   //64k
 	ROM_KERNAL_SIZE = 0x2000,   //8k
 	ROM_CHAR_SIZE   = 0x1000,   //4k
@@ -97,11 +107,18 @@ static uint8_t ROM_CART_HI[ROM_CART_SIZE];
 static uint8_t ROM_CART_LO[ROM_CART_SIZE];
 static IO_TYPE IO_MEM[IO_MEM_SIZE];
 
-
 /* Function declarations */
 void MemInit();
 void Mem(uint16_t address, uint8_t* data, MEM_ACCESS rw);
 extern void MemLoad(uint16_t address, uint8_t* data, uint16_t length);
 extern void Cartridge(CARTRIDGE_TYPE t, bool insert);
+
+/* Internal help functions */
+static uint8_t getBankSwitchZone(uint8_t page);
+static MEM_TYPE getMemType(uint8_t zone, uint8_t ctrl);
+static MEM_BASE_ADDRESS getBaseAddress(uint8_t type);
+static IO_BASE_ADDRESS getIOBaseAddress(IO_TYPE type);
+static void dispatchIOMemCall(IO_TYPE type, uint16_t address, uint8_t* data, MEM_ACCESS rw);
+static uint8_t* getMemory(MEM_TYPE type);
 
 #endif /* MEMORY_ */
