@@ -32,10 +32,7 @@ void MemInit(){
 /* This function performs reads and writes to the memory */
 void Mem(uint16_t address, uint8_t* data, MEM_ACCESS rw){
 
-    /* Check memory configuration for bank switching */
-    uint8_t ctrlBits = (RAM[CPU_PORT_REG] & 0x03) | GameEnabled_n | ExpansionEnabled_n;
-
-    /* Handle page crossing */
+     /* Handle page crossing */
     uint8_t memPage = address / MEM_PAGE_SIZE;
     if (PreviousPage != memPage){
         // TODO: if page crossed then tick()
@@ -43,8 +40,8 @@ void Mem(uint16_t address, uint8_t* data, MEM_ACCESS rw){
     PreviousPage = memPage;
 
     /* Get the current memory bank and calculate its local address */
-    uint8_t zone = getBankSwitchZone(memPage);
-    MEM_TYPE memType = getMemType(zone, ctrlBits);
+    BANK_SWITCHING_ZONE zone = getBankSwitchZone(memPage);
+    MEM_TYPE memType = getMemType(zone);
     MEM_BASE_ADDRESS base = getBaseAddress(zone);
     uint16_t localAddress = address - base;
 
@@ -83,18 +80,91 @@ void Cardridge(CARTRIDGE_TYPE t, bool insert){
 }
 
 /* Returns bank switching zone based on memory page */
-static uint8_t getBankSwitchZone(uint8_t page){
-    // TODO: Implement
-    return 0;
+static BANK_SWITCHING_ZONE getBankSwitchZone(uint8_t page){
+    if (page >= 0 && page <= 15)
+        return ZONE1;
+    else if(page >=16 && page <= 127)
+        return ZONE2;
+    else if(page >=128 && page <= 159)
+        return ZONE3;
+    else if(page >= 160 && page <= 191)
+        return ZONE4;
+    else if(page >= 192 && page <= 207)
+        return ZONE5;
+    else if(page >= 208 && page <= 223)
+        return ZONE6;
+    else
+        return ZONE7;
 }
 
-static MEM_TYPE getMemType(uint8_t zone, uint8_t ctrl){
-    // TODO: Implement
+/* This function decodes the current memory configuration by looking at the CPU port register bits
+ * as well as connected cartridges. This is done for each memory bank zone to make the mapping a little
+ * more easy */
+static MEM_TYPE getMemType(BANK_SWITCHING_ZONE zone){
+    /* Check memory configuration for bank switching */
+    uint8_t ctrlBits = (RAM[CPU_PORT_REG] & 0x03);
+    bool hiram = (ctrlBits & HIRAM);
+    bool loram = (ctrlBits & LORAM);
+    bool charen_n = (ctrlBits & CHAREN);
+
+    /* Always RAM in all bank switching zones when */
+    if ((!ExpansionEnabled_n && !GameEnabled_n && !charen_n && !hiram && loram) ||
+            (!hiram && !loram && !(!GameEnabled_n && ExpansionEnabled_n))){
+        return TYPE_RAM;
+    }
+
+    switch(zone){
+    case ZONE1: // fall thru
+    case ZONE2:
+        return TYPE_RAM;
+        break;
+    case ZONE3:
+        if ((ExpansionEnabled_n && !GameEnabled_n) || (!ExpansionEnabled_n && hiram && loram))
+            return TYPE_CART_LO;
+        else
+            return TYPE_RAM;
+        break;
+    case ZONE4:
+        if (GameEnabled_n && hiram && loram)
+            return TYPE_BASIC;
+        else if (!GameEnabled_n && !ExpansionEnabled_n && hiram)
+            return TYPE_CART_HI;
+        else if (!GameEnabled_n && ExpansionEnabled_n)
+            return TYPE_UNMAPPED;
+        else
+            return TYPE_RAM;
+        break;
+    case ZONE5:
+        if (!GameEnabled_n)
+            return TYPE_UNMAPPED;
+        else
+            return TYPE_RAM;
+        break;
+    case ZONE6:
+        /* Note that all RAM cases are covered above before this switch statement */
+        if (!charen_n && !(ExpansionEnabled_n && !GameEnabled_n))
+            return TYPE_CHAR;
+        else
+            return TYPE_IO;
+        break;
+    case ZONE7:
+        if (!GameEnabled_n && ExpansionEnabled_n)
+            return TYPE_CART_HI;
+        else if(hiram)
+            return TYPE_KERNAL;
+        else
+            return TYPE_RAM;
+        break;
+    default:
+        break;
+    }
     return TYPE_UNMAPPED;
 }
 
-static MEM_BASE_ADDRESS getBaseAddress(uint8_t zone){
-    // TODO: Implement
+
+/* This function returns the base address for a given memory bank zone */
+static MEM_BASE_ADDRESS getBaseAddress(BANK_SWITCHING_ZONE zone){
+
     return BASE_RAM;
 }
 

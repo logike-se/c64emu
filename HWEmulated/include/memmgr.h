@@ -18,11 +18,19 @@
 #include <string.h>
 #include <stdbool.h>
 
+/* CPU memory map control bits */
+#define LORAM    0x01
+#define HIRAM    0x02
+#define CHAREN   0x04
+#define GAME     0x08
+#define EXROM    0x10
+
 typedef enum{
     TYPE_UNMAPPED,
     TYPE_RAM,
     TYPE_KERNAL,
     TYPE_CHAR,
+    TYPE_BASIC,
     TYPE_CART_HI,
     TYPE_CART_LO,
     TYPE_IO
@@ -78,14 +86,6 @@ typedef enum{
 } IO_SIZE;
 
 typedef enum{
-	LORAM   = 0x01,
-	HIRAM   = 0x02,
-	CHAREN  = 0x04,
-	GAME    = 0x08,
-	EXROM   = 0x10
-} BANK_SWITCH_MASK;
-
-typedef enum{
 	MEM_READ,
 	MEM_WRITE
 } MEM_ACCESS;
@@ -98,6 +98,16 @@ typedef enum{
     CART_GAME,
     CART_EXROM
 } CARTRIDGE_TYPE;
+
+typedef enum{
+    ZONE1,
+    ZONE2,
+    ZONE3,
+    ZONE4,
+    ZONE5,
+    ZONE6,
+    ZONE7
+} BANK_SWITCHING_ZONE;
 
 /* Memory declarations */
 static uint8_t RAM[RAM_SIZE];
@@ -114,9 +124,9 @@ extern void MemLoad(uint16_t address, uint8_t* data, uint16_t length);
 extern void Cartridge(CARTRIDGE_TYPE t, bool insert);
 
 /* Internal help functions */
-static uint8_t getBankSwitchZone(uint8_t page);
-static MEM_TYPE getMemType(uint8_t zone, uint8_t ctrl);
-static MEM_BASE_ADDRESS getBaseAddress(uint8_t type);
+static BANK_SWITCHING_ZONE getBankSwitchZone(uint8_t page);
+static MEM_TYPE getMemType(BANK_SWITCHING_ZONE zone);
+static MEM_BASE_ADDRESS getBaseAddress(BANK_SWITCHING_ZONE zone);
 static IO_BASE_ADDRESS getIOBaseAddress(IO_TYPE type);
 static void dispatchIOMemCall(IO_TYPE type, uint16_t address, uint8_t* data, MEM_ACCESS rw);
 static uint8_t* getMemory(MEM_TYPE type);
