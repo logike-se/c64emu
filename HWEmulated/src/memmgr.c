@@ -12,6 +12,9 @@ void MemInit(){
 	/* Clear Kernal ROM */
 	memset(ROM_KERNAL, 0, ROM_KERNAL_SIZE);
 
+	/* Clear Basic ROM */
+	memset(ROM_BASIC, 0, ROM_BASIC_SIZE);
+
 	/* Clear Character ROM */
 	memset(ROM_CHAR, 0, ROM_CHAR_SIZE);
 
@@ -42,7 +45,7 @@ void Mem(uint16_t address, uint8_t* data, MEM_ACCESS rw){
     /* Get the current memory bank and calculate its local address */
     BANK_SWITCHING_ZONE zone = getBankSwitchZone(memPage);
     MEM_TYPE memType = getMemType(zone);
-    MEM_BASE_ADDRESS base = getBaseAddress(zone);
+    MEM_BASE_ADDRESS base = getBaseAddress(memType);
     uint16_t localAddress = address - base;
 
     if (memType == TYPE_IO){
@@ -101,7 +104,7 @@ static BANK_SWITCHING_ZONE getBankSwitchZone(uint8_t page){
  * as well as connected cartridges. This is done for each memory bank zone to make the mapping a little
  * more easy */
 static MEM_TYPE getMemType(BANK_SWITCHING_ZONE zone){
-    /* Check memory configuration for bank switching */
+    /* Check configuration for bank switching */
     uint8_t ctrlBits = (RAM[CPU_PORT_REG] & 0x03);
     bool hiram = (ctrlBits & HIRAM);
     bool loram = (ctrlBits & LORAM);
@@ -128,7 +131,7 @@ static MEM_TYPE getMemType(BANK_SWITCHING_ZONE zone){
         if (GameEnabled_n && hiram && loram)
             return TYPE_BASIC;
         else if (!GameEnabled_n && !ExpansionEnabled_n && hiram)
-            return TYPE_CART_HI;
+            return TYPE_CART_HI_EXT;
         else if (!GameEnabled_n && ExpansionEnabled_n)
             return TYPE_UNMAPPED;
         else
@@ -149,7 +152,7 @@ static MEM_TYPE getMemType(BANK_SWITCHING_ZONE zone){
         break;
     case ZONE7:
         if (!GameEnabled_n && ExpansionEnabled_n)
-            return TYPE_CART_HI;
+            return TYPE_CART_HI_GAME;
         else if(hiram)
             return TYPE_KERNAL;
         else
@@ -162,22 +165,98 @@ static MEM_TYPE getMemType(BANK_SWITCHING_ZONE zone){
 }
 
 
-/* This function returns the base address for a given memory bank zone */
-static MEM_BASE_ADDRESS getBaseAddress(BANK_SWITCHING_ZONE zone){
-
-    return BASE_RAM;
+/* This function returns the base address for a given memory type */
+static MEM_BASE_ADDRESS getBaseAddress(MEM_TYPE type){
+    switch(type){
+    case TYPE_RAM:
+        return BASE_RAM;
+        break;
+    case TYPE_CART_LO:
+        return BASE_CART_LO;
+        break;
+    case TYPE_CART_HI_EXT:
+        return BASE_CART_HI_EXT;
+        break;
+    case TYPE_BASIC:
+        return BASE_BASIC;
+        break;
+    case TYPE_CHAR:
+        return BASE_CHAR;
+        break;
+    case TYPE_IO:
+        return BASE_IO;
+        break;
+    case TYPE_CART_HI_GAME:
+        return BASE_CART_HI_GAME;
+        break;
+    case TYPE_KERNAL:
+        return BASE_KERNAL;
+        break;
+    default:
+        break;
+    }
+    return BASE_UNMAPPED;
 }
 
 static IO_BASE_ADDRESS getIOBaseAddress(IO_TYPE type){
-    // TODO: Implement
-    return BASE_VIC;
+    switch(type){
+    case TYPE_VIC:
+        return BASE_VIC;
+        break;
+    case TYPE_SID:
+        return BASE_SID;
+        break;
+    case TYPE_COLOR_RAM:
+        return BASE_COLOR_RAM;
+        break;
+    case TYPE_CIA1:
+        return BASE_CIA1;
+        break;
+    case TYPE_CIA2:
+        return BASE_CIA2;
+        break;
+    case TYPE_IO1:
+        return BASE_IO1;
+        break;
+    case TYPE_IO2:
+        return BASE_IO2;
+        break;
+    default:
+        break;
+    }
+    /* dummy return */
+    return 0xFFFF;
 }
 
 static void dispatchIOMemCall(IO_TYPE type, uint16_t address, uint8_t* data, MEM_ACCESS rw){
     // TODO: Implement
 }
 
+/* Returns the addressed memory */
 static uint8_t* getMemory(MEM_TYPE type){
-    // TODO: Implement
-    return RAM;
+    switch(type){
+    case TYPE_RAM:
+        return RAM;
+        break;
+    case TYPE_CART_LO:
+        return ROM_CART_LO;
+        break;
+    case TYPE_CART_HI_EXT:
+    case TYPE_CART_HI_GAME:
+        return ROM_CART_HI;
+        break;
+    case TYPE_BASIC:
+        return ROM_BASIC;
+        break;
+    case TYPE_KERNAL:
+        return ROM_KERNAL;
+        break;
+    case TYPE_CHAR:
+        return ROM_CHAR;
+        break;
+    default:
+        break;
+    }
+
+    return NULL;
 }

@@ -31,7 +31,8 @@ typedef enum{
     TYPE_KERNAL,
     TYPE_CHAR,
     TYPE_BASIC,
-    TYPE_CART_HI,
+    TYPE_CART_HI_GAME,
+    TYPE_CART_HI_EXT,
     TYPE_CART_LO,
     TYPE_IO
 } MEM_TYPE;
@@ -39,6 +40,7 @@ typedef enum{
 typedef enum{
 	RAM_SIZE        = 0xFFFF,   //64k
 	ROM_KERNAL_SIZE = 0x2000,   //8k
+	ROM_BASIC_SIZE  = 0x2000,   //8k
 	ROM_CHAR_SIZE   = 0x1000,   //4k
 	ROM_CART_SIZE   = 0x2000,   //8k
 	IO_MEM_SIZE     = 0x1000,   //4k
@@ -49,11 +51,12 @@ typedef enum{
 	BASE_RAM            = 0x0000,
 	BASE_KERNAL         = 0xE000,
 	BASE_CHAR           = 0xD000,
-	BASE_BASIC          = 0xB000,
+	BASE_BASIC          = 0xA000,
 	BASE_CART_HI_GAME   = 0xE000,
 	BASE_CART_HI_EXT    = 0xA000,
 	BASE_CART_LO        = 0x8000,
-	BASE_IO             = 0xD000
+	BASE_IO             = 0xD000,
+	BASE_UNMAPPED       = 0xFFFF
 } MEM_BASE_ADDRESS;
 
 typedef enum{
@@ -111,6 +114,7 @@ typedef enum{
 
 /* Memory declarations */
 static uint8_t RAM[RAM_SIZE];
+static uint8_t ROM_BASIC[ROM_BASIC_SIZE];
 static uint8_t ROM_KERNAL[ROM_KERNAL_SIZE];
 static uint8_t ROM_CHAR[ROM_CHAR_SIZE];
 static uint8_t ROM_CART_HI[ROM_CART_SIZE];
@@ -126,7 +130,7 @@ extern void Cartridge(CARTRIDGE_TYPE t, bool insert);
 /* Internal help functions */
 static BANK_SWITCHING_ZONE getBankSwitchZone(uint8_t page);
 static MEM_TYPE getMemType(BANK_SWITCHING_ZONE zone);
-static MEM_BASE_ADDRESS getBaseAddress(BANK_SWITCHING_ZONE zone);
+static MEM_BASE_ADDRESS getBaseAddress(MEM_TYPE type);
 static IO_BASE_ADDRESS getIOBaseAddress(IO_TYPE type);
 static void dispatchIOMemCall(IO_TYPE type, uint16_t address, uint8_t* data, MEM_ACCESS rw);
 static uint8_t* getMemory(MEM_TYPE type);
