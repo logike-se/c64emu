@@ -1,2 +1,5 @@
 # c64emu
-C64 Emulator written in C. IOs, graphics and sound written in CPython.
+C64 Emulator library written in C.
+
+Under construction...
+
