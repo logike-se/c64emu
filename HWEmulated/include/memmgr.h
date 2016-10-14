@@ -23,8 +23,6 @@
 #define LORAM    0x01
 #define HIRAM    0x02
 #define CHAREN   0x04
-#define GAME     0x08
-#define EXROM    0x10
 
 typedef enum{
     TYPE_UNMAPPED,

@@ -1,7 +1,10 @@
 #include "memmgr.h"
 
-static uint8_t GameEnabled_n = GAME;
-static uint8_t ExpansionEnabled_n = EXROM;
+/* Cartridge inserted, active low */
+static bool Game_n = true;
+static bool Expansion_n = true;
+
+/* Previous memory page */
 static uint8_t PreviousPage = 0;
 
 /* Initialize all memories */
@@ -72,10 +75,10 @@ void Mem(uint16_t address, uint8_t* data, MEM_ACCESS rw){
 void Cardridge(CARTRIDGE_TYPE t, bool insert){
     switch(t){
     case CART_GAME:
-        GameEnabled_n = (insert) ? 0 : GAME;
+        Game_n = ~insert;
         break;
     case CART_EXROM:
-        ExpansionEnabled_n = (insert) ? 0 : EXROM;
+        Expansion_n = ~insert;
         break;
     default:
         break;
@@ -111,8 +114,8 @@ static MEM_TYPE getMemType(BANK_SWITCHING_ZONE zone){
     bool charen_n = (ctrlBits & CHAREN);
 
     /* Always RAM in all bank switching zones when */
-    if ((!ExpansionEnabled_n && !GameEnabled_n && !charen_n && !hiram && loram) ||
-            (!hiram && !loram && !(!GameEnabled_n && ExpansionEnabled_n))){
+    if ((!Expansion_n && !Game_n && !charen_n && !hiram && loram) ||
+            (!hiram && !loram && !(!Game_n && Expansion_n))){
         return TYPE_RAM;
     }
 
@@ -122,36 +125,36 @@ static MEM_TYPE getMemType(BANK_SWITCHING_ZONE zone){
         return TYPE_RAM;
         break;
     case ZONE3:
-        if ((ExpansionEnabled_n && !GameEnabled_n) || (!ExpansionEnabled_n && hiram && loram))
+        if ((Expansion_n && !Game_n) || (!Expansion_n && hiram && loram))
             return TYPE_CART_LO;
         else
             return TYPE_RAM;
         break;
     case ZONE4:
-        if (GameEnabled_n && hiram && loram)
+        if (Game_n && hiram && loram)
             return TYPE_BASIC;
-        else if (!GameEnabled_n && !ExpansionEnabled_n && hiram)
+        else if (!Game_n && !Expansion_n && hiram)
             return TYPE_CART_HI_EXT;
-        else if (!GameEnabled_n && ExpansionEnabled_n)
+        else if (!Game_n && Expansion_n)
             return TYPE_UNMAPPED;
         else
             return TYPE_RAM;
         break;
     case ZONE5:
-        if (!GameEnabled_n)
+        if (!Game_n)
             return TYPE_UNMAPPED;
         else
             return TYPE_RAM;
         break;
     case ZONE6:
         /* Note that all RAM cases are covered above before this switch statement */
-        if (!charen_n && !(ExpansionEnabled_n && !GameEnabled_n))
+        if (!charen_n && !(Expansion_n && !Game_n))
             return TYPE_CHAR;
         else
             return TYPE_IO;
         break;
     case ZONE7:
-        if (!GameEnabled_n && ExpansionEnabled_n)
+        if (!Game_n && Expansion_n)
             return TYPE_CART_HI_GAME;
         else if(hiram)
             return TYPE_KERNAL;
