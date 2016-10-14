@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include "c64emu.h"
 
 /* CPU memory map control bits */
 #define LORAM    0x01
@@ -98,11 +99,6 @@ typedef enum{
 } CPU_REGISTERS;
 
 typedef enum{
-    CART_GAME,
-    CART_EXROM
-} CARTRIDGE_TYPE;
-
-typedef enum{
     ZONE1,
     ZONE2,
     ZONE3,
@@ -121,11 +117,9 @@ static uint8_t ROM_CART_HI[ROM_CART_SIZE];
 static uint8_t ROM_CART_LO[ROM_CART_SIZE];
 static IO_TYPE IO_MEM[IO_MEM_SIZE];
 
-/* Function declarations */
+/* System functions */
 void MemInit();
 void Mem(uint16_t address, uint8_t* data, MEM_ACCESS rw);
-extern void MemLoad(uint16_t address, uint8_t* data, uint16_t length);
-extern void Cartridge(CARTRIDGE_TYPE t, bool insert);
 
 /* Internal help functions */
 static BANK_SWITCHING_ZONE getBankSwitchZone(uint8_t page);
