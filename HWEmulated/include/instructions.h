@@ -13,6 +13,9 @@ typedef enum{
     ORA,
     ASL,
     PHP,
+    BPL,
+    CLC,
+    NOP,
     /* Illegal Instructions */
     KIL,
     SLO,
@@ -22,40 +25,63 @@ typedef enum{
 } Instruction;
 
 typedef enum{
-    IMPL,
+    IMP,
     INX,
+    INY,
     ZP,
+    ZPX,
+    ZPY,
     IMM,
     ACC,
-    ABS
+    ABS,
+    REL,
+    ABX,
+    ABY
 } AddrMode;
 
 typedef struct{
-    Instruction instr;
-    AddrMode mode;
-    size_t size;
-    size_t cycles;
+    Instruction instr;      /* Instruction Name */
+    AddrMode mode;          /* Addressing mode */
+    size_t size;            /* Size of operation in bytes */
+    size_t cycles;          /* Minimum number of clock cycles */
 } InstructionInfo;
 
 static InstructionInfo Decode[/*OpCode*/] = {
         /* 0x00 */
-        {BRK, IMPL, 1, 7},
-        {ORA, INX,  2, 6},
-        {KIL, IMPL, 1, 0},
-        {SLO, INX,  2, 8},
-        {DOP, ZP,   2, 3},
-        {ORA, ZP,   2, 3},
-        {ASL, ZP,   2, 5},
-        {SLO, ZP,   2, 5},
-        {PHP, IMPL, 1, 3},
-        {ORA, IMM,  2, 2},
-        {ASL, ACC,  1, 2},
-        {ANC, IMM,  2, 2},
-        {TOP, ABS,  3, 4},
-        {ORA, ABS,  3, 4},
-        {ASL, ABS,  3, 6},
-        {SLO, ABS,  3, 6}
+        {BRK, IMP, 1, 7},
+        {ORA, INX, 2, 6},
+        {KIL, IMP, 1, 0},
+        {SLO, INX, 2, 8},
+        {DOP, ZP,  2, 3},
+        {ORA, ZP,  2, 3},
+        {ASL, ZP,  2, 5},
+        {SLO, ZP,  2, 5},
+        {PHP, IMP, 1, 3},
+        {ORA, IMM, 2, 2},
+        {ASL, ACC, 1, 2},
+        {ANC, IMM, 2, 2},
+        {TOP, ABS, 3, 4},
+        {ORA, ABS, 3, 4},
+        {ASL, ABS, 3, 6},
+        {SLO, ABS, 3, 6},
         /* 0x10 */
+        {BPL, REL, 2, 2},
+        {ORA, INY, 2, 5},
+        {KIL, IMP, 1, 0},
+        {SLO, INY, 2, 8},
+        {DOP, ZPX, 2, 4},
+        {ORA, ZPX, 2, 4},
+        {ASL, ZPX, 2, 6},
+        {SLO, ZPY, 2, 6},
+        {CLC, IMP, 1, 2},
+        {ORA, ABY, 3, 4},
+        {NOP, IMP, 1, 2},
+        {SLO, ABY, 3, 7},
+        {TOP, ABX, 3, 4},
+        {ORA, ABX, 3, 4},
+        {ASL, ABX, 3, 7},
+        {SLO, ABX, 3, 7}
+        /* 0x20 */
 };
 
 #endif /* INCLUDE_INSTRUCTIONS_H_ */
