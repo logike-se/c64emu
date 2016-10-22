@@ -15,7 +15,13 @@ typedef enum{
 
 
 /* Exported functions */
+
+/* Memory */
 extern void MemLoad(uint16_t address, uint8_t* data, uint16_t length);
 extern void Cartridge(CARTRIDGE_TYPE t, bool insert);
+
+/* CIA1 */
+extern void KeyPressed(char key);
+extern void KeyReleased(char key);
 
 #endif /* INCLUDE_C64EMU_H_ */

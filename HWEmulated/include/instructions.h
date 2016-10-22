@@ -16,12 +16,18 @@ typedef enum{
     BPL,
     CLC,
     NOP,
+    JSR,
+    AND,
+    BIT,
+    ROL,
+    PLP,
     /* Illegal Instructions */
     KIL,
     SLO,
     DOP,
     ANC,
-    TOP
+    TOP,
+    RLA
 } Instruction;
 
 typedef enum{
@@ -80,8 +86,25 @@ static InstructionInfo Decode[/*OpCode*/] = {
         {TOP, ABX, 3, 4},
         {ORA, ABX, 3, 4},
         {ASL, ABX, 3, 7},
-        {SLO, ABX, 3, 7}
+        {SLO, ABX, 3, 7},
         /* 0x20 */
+        {JSR, ABS, 3, 6},
+        {AND, INX, 2, 6},
+        {KIL, IMP, 1, 0},
+        {RLA, INX, 2, 8},
+        {BIT, ZP,  2, 3},
+        {AND, ZP,  2, 5},
+        {ROL, ZP,  2, 5},
+        {RLA, ZP,  2, 5},
+        {PLP, IMP, 1, 4},
+        {AND, IMM, 2, 2},
+        {ROL, ACC, 1, 2},
+        {ANC, IMM, 2, 2},
+        {BIT, ABS, 3, 4},
+        {AND, ABS, 3, 4},
+        {ROL, ABS, 3, 6},
+        {RLA, ABS, 3, 6}
+        /* 0x30 */
 };
 
 #endif /* INCLUDE_INSTRUCTIONS_H_ */
