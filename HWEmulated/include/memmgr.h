@@ -18,6 +18,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include "c64emu.h"
+#include "common.h"
 
 /* CPU memory map control bits */
 #define LORAM    0x01
@@ -57,16 +58,6 @@ typedef enum{
 	BASE_IO             = 0xD000,
 	BASE_UNMAPPED       = 0xFFFF
 } MEM_BASE_ADDRESS;
-
-typedef enum{
-	TYPE_VIC,
-	TYPE_SID,
-	TYPE_COLOR_RAM,
-	TYPE_CIA1,
-	TYPE_CIA2,
-	TYPE_IO1,
-	TYPE_IO2
-} IO_TYPE;
 
 /* Note: Real base address is IO_BASE_ADDRESS + MEM_BASE_ADDRESS */
 typedef enum{
