@@ -36,11 +36,6 @@ static uint8_t CiaRegisters[NO_CIA][NO_REGISTER];   // CIA registers
 void CiaInit();
 void CiaWrite(IO_TYPE type, uint16_t address, uint8_t data);
 uint8_t CiaRead(IO_TYPE type, uint16_t address);
-
-/* Internal functions */
-void cia1Write(Registers reg, uint8_t data);
-void cia2Write(Registers reg, uint8_t data);
-uint8_t cia1Read(Registers reg, uint8_t data);
-uint8_t cia2Read(Registers reg, uint8_t data);
+void CiaUpdate();
 
 #endif /* INCLUDE_CIA_H_ */
