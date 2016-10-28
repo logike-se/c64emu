@@ -23,7 +23,19 @@ typedef enum{
     PRA = 0,
     PRB,
     DDRA,
-    DDRB
+    DDRB,
+    TAL,
+    TAH,
+    TBL,
+    TBH,
+    TOD_10TH,
+    TOD_SEC,
+    TOD_MIN,
+    TOD_HR,
+    SDR,
+    ICR,
+    CRA,
+    CRB
 } Registers;
 
 /* This map corresponds to the keyboard matrix defined by Port A and Port B of CIA1 */
